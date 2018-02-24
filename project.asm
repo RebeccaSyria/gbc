@@ -33,7 +33,8 @@ jp	begin ; jump over rom header to beginning
 	DW 0 ; Checksum
 ;END ROM HEADER
 
-INCLUDE "memory.asm" ; tools for copying to/from RAM from devrs.com 
+INCLUDE "memory.asm" ; tools for copying to/from RAM from devrs.com
+ 
 TileData:
 	chr_IBMPC1	1,8 
 
@@ -48,7 +49,7 @@ init:
 	ld	[rSCY], a ; load 0 from a to scroll Y
 	call	StopLCD ; turn off LCD so we can write to vRAM 
 	ld	hl, TileData ; load character set into hl
-	ld	de, _VRAM ; load vRAM location into de 
+	ld	de, _VRAM ; load vRAM location in`to de 
 	ld	bc, 8*256 ; load size of the character set into bc
 	call	mem_CopyMono ; call mem_CopyMono, hl - source, de - destination, bc - size
 	;turn LCD back on 
@@ -67,30 +68,81 @@ init:
 
 ; jump to an infite loop 
 wait:
-	call	Scroll
-	ld	bc,$05ff
+	call	ReadJoy
+	ld	bc,$0fff
 	call	Delay
 	nop
 	jr	wait
 
 ;label for title
 Title:
-	DB	"HELLO WORLD!"
+	DB	"HECK THE WORLD!"
 TitleEnd:
 
-Scroll:
+ScrollLEFT:
 	ld	a, [rSCX]
 	inc	a
 	ld	[rSCX], a
+	jp	ScrollLeftRet
+
+ScrollRIGHT:
+	ld	a, [rSCX]
+	dec	a
+	ld	[rSCX], a
+	jp	ScrollRightRet
+
+
+ScrollDOWN:
 	ld	a, [rSCY]
 	inc	a
-	ld	[rSCY],a
+	ld	[rSCY], a
+	jp	ScrollDownRet
+
+ScrollUP:
+	ld	a, [rSCY]
+	dec	a
+	ld	[rSCY], a
+	jp	ScrollUpRet
+
+ReadJoy:
+	push	bc
+	ld	a, P1F_5 ;get joypad
+	ld	[rP1], a ;save to a 
+	ld	a, [rP1] ;read keypress reg multiple times 
+	ld	a, [rP1] 
+	ld	a, [rP1]
+	cpl	; invert
+	ld	b, a 
+	;test Right Key
+	and	$01
+	cp	$01 
+	jr	z, ScrollRIGHT
+ScrollRightRet:
+	;test left key
+	ld	a, b
+	and	$02
+	cp	$02
+	jr	z, ScrollLEFT
+ScrollLeftRet:
+	;test down key
+	ld	a, b
+	and	$04
+	cp	$04
+	jr	z, ScrollDOWN
+ScrollDownRet:
+	;test up key
+	ld	a, b
+	and	$08
+	cp	$08
+	jr	z, ScrollUP
+ScrollUpRet:
+	pop	bc
 	ret
 
 ;turn off the LCD
 StopLCD:
 	ld	a, [rLCDC] ;load LCDC into a
-	rlca	; rotate a left 1 bit, high but is put into carry flag 
+	rlca	; rotate a left 1 bit, high bit is put into carry flag 
 	ret	nc ;return if carry flag is 0, meaning LCD is off 
 
 .wait:
