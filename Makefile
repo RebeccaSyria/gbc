@@ -1,6 +1,6 @@
 project.gb: project.o
-	rgblink -o project.gb project.o
-	rgbfix -v -p 0 project.gb
+	rgblink -o mygame.gb mygame.o
+	rgbfix -v -p 0 mygame.gb
 project.o: project.asm
-	rgbasm -o project.o project.asm
+	rgbasm -o mygame.o mygame.asm
 
