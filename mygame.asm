@@ -90,48 +90,108 @@ animation:
 	ld	a, [rLY]
 	cp	145
 	jr	nz, .wait
-	
-	ld	a, [_SPR0_Y]
-	ld	hl, _MOVY
-	add	a, [hl]
-	ld	hl, _SPR0_Y
-	ld	[hl], a
-	cp	152
-	jr	z, .dec_y
-	cp	16
-	jr	z, .inc_y
-	jr	.end_y
-.dec_y:
-	ld	a, -1
-	ld	[_MOVY], a
-	jr	.end_y
-.inc_y:
-	ld	a, 1
-	ld	[_MOVY], a
-.end_y:
-	ld	a, [_SPR0_X]
-	ld	hl, _MOVX
-	add	a, [hl]
-	ld	hl, _SPR0_X
-	ld	[hl], a
-	cp	160
-	jr	z, .dec_x
-	cp	8
-	jr	z, .inc_x
-	jr	.end_x
-.dec_x:
-	ld	a, -1
-	ld	[_MOVX],a
-	jr	.end_x
-.inc_x:
-	ld	a, -1
-	ld	[_MOVX], a
-	jr	.end_x
-.end_x:
+	call	ReadJoy
+;	ld	a, [_SPR0_Y]
+;	ld	hl, _MOVY
+;	add	a, [hl]
+;	ld	hl, _SPR0_Y
+;	ld	[hl], a
+;	cp	152
+;	jr	z, .dec_y
+;	cp	16
+;	jr	z, .inc_y
+;	jr	.end_y
+;.dec_y:
+;	ld	a, -1
+;	ld	[_MOVY], a
+;	jr	.end_y
+;.inc_y:
+;	ld	a, 1
+;	ld	[_MOVY], a
+;.end_y:
+;	ld	a, [_SPR0_X]
+;	ld	hl, _MOVX
+;	add	a, [hl]
+;	ld	hl, _SPR0_X
+;	ld	[hl], a
+;	cp	160
+;	jr	z, .dec_x
+;	cp	8
+;	jr	z, .inc_x
+;	jr	.end_x
+;.dec_x:
+;	ld	a, -1
+;	ld	[_MOVX],a
+;	jr	.end_x
+;.inc_x:
+;	ld	a, -1
+;	ld	[_MOVX], a
+;	jr	.end_x
+;.end_x:
 	ld	bc, $0fff
 	call Delay
 	jr animation
 
+
+ReadJoy:
+	push	bc ;save bc to stack 
+	ld	a, P1F_5 ;get joypad, macro from devrs
+	ld	[rP1], a
+	ld	a, [rP1] ;get keypress multple times to account for hardware 
+	ld	a, [rP1]
+	ld	a, [rP1]
+	ld	a, [rP1]
+	cpl	;invert 
+	ld	b, a
+	;test Right Key
+	and	$01
+	cp	$01
+	jr	z, MoveRight
+MoveRightRet:
+	;test Left key
+	ld	a, b
+	and	$02
+	cp	$02
+	jr	z, MoveLeft
+MoveLeftRet:
+	;test down key
+	ld	a, b
+	and	$04
+	cp	$04
+	jr	z, MoveDown
+MoveDownRet:
+	;test up key
+	ld	a, b
+	and	$08
+	cp	$08
+	jr	z, MoveUp
+MoveUpRet:
+	pop	bc ;return bc from stack
+	ret 
+
+MoveRight:
+	ld	a, [_SPR0_X]
+	inc	a
+	ld	[_SPR0_X], a
+	jr	MoveRightRet
+
+MoveLeft:
+	ld	a, [_SPR0_X]
+	dec	a
+	ld	[_SPR0_X],a
+	jr	MoveLeftRet
+
+MoveDown:
+	ld	a, [_SPR0_Y]
+	dec	a
+	ld	[_SPR0_Y],a
+	jr	MoveDownRet
+
+MoveUp:
+	ld	a, [_SPR0_Y]
+	inc	a
+	ld	[_SPR0_Y],a
+	jr	MoveUpRet
 
 ;delay, parameter in bc 
 Delay:
@@ -155,10 +215,10 @@ StopLCD:
 	ret	;return 
 
 Tiles:
+	;bg tile
 	DB $00, $00, $00, $00, $00, $00, $00, $00
 	DB $AA, $00, $44, $00, $AA, $00, $11, $00
-	;DB $3E, $3E, $41, $7F, $41, $6B, $41, $7F
-	;DB $41, $63, $41, $7F, $3E, $3E, $00, $00
-	DB $00, $00, $42, $42, $42, $42, $00, $00, 
-	DB $18, $18, $99, $99, $66, $66, $00, $00,
+	;sprite
+	DB $00, $00, $42, $42, $42, $42, $00, $00 
+	DB $18, $18, $99, $99, $66, $66, $00, $00
 EndTiles:
