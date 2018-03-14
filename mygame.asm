@@ -6,6 +6,11 @@ _SPR0_X		EQU	_OAMRAM+1
 _SPR0_NUM	EQU	_OAMRAM+2
 _SPR0_ATT	EQU	_OAMRAM+3
 
+_SPR1_Y		EQU	_OAMRAM+4
+_SPR1_X		EQU	_OAMRAM+5
+_SPR1_NUM	EQU	_OAMRAM+6
+_SPR1_ATT	EQU	_OAMRAM+7
+
 ;when to move the sprite 
 _MOVX	EQU	_RAM
 _MOVY	EQU	_RAM+1
@@ -45,7 +50,7 @@ init:
 
 	ld	hl, Tiles
 	ld	de, _VRAM 
-	ld	b, 32 ; bytes to copy(2 tiles) 
+	ld	b, 48 ; bytes to copy(3 tiles) 
 .load_loop:
 	ld	a, [hl]
 	ld	[de], a
@@ -76,7 +81,16 @@ init:
 	ld	a, 1
 	ld	[_SPR0_NUM], a
 	ld	a, 0 
-	ld	[_SPR0_ATT], a 
+	ld	[_SPR0_ATT], a
+
+	ld	a, 50
+	ld	[_SPR1_Y], a
+	ld	a, 50
+	ld	[_SPR1_X], a
+	ld	a, 2
+	ld	[_SPR1_NUM], a
+	ld	a, 0
+	ld	[_SPR1_ATT], a
 	
 	ld	a, LCDCF_ON|LCDCF_BG8000|LCDCF_BG9800|LCDCF_BGON|LCDCF_OBJ8|LCDCF_OBJON
 	ld	[rLCDC], a
@@ -91,43 +105,6 @@ animation:
 	cp	145
 	jr	nz, .wait
 	call	ReadJoy
-;	ld	a, [_SPR0_Y]
-;	ld	hl, _MOVY
-;	add	a, [hl]
-;	ld	hl, _SPR0_Y
-;	ld	[hl], a
-;	cp	152
-;	jr	z, .dec_y
-;	cp	16
-;	jr	z, .inc_y
-;	jr	.end_y
-;.dec_y:
-;	ld	a, -1
-;	ld	[_MOVY], a
-;	jr	.end_y
-;.inc_y:
-;	ld	a, 1
-;	ld	[_MOVY], a
-;.end_y:
-;	ld	a, [_SPR0_X]
-;	ld	hl, _MOVX
-;	add	a, [hl]
-;	ld	hl, _SPR0_X
-;	ld	[hl], a
-;	cp	160
-;	jr	z, .dec_x
-;	cp	8
-;	jr	z, .inc_x
-;	jr	.end_x
-;.dec_x:
-;	ld	a, -1
-;	ld	[_MOVX],a
-;	jr	.end_x
-;.inc_x:
-;	ld	a, -1
-;	ld	[_MOVX], a
-;	jr	.end_x
-;.end_x:
 	ld	bc, $0fff
 	call Delay
 	jr animation
@@ -171,24 +148,67 @@ MoveUpRet:
 
 MoveRight:
 	ld	a, [_SPR0_X]
+	cp	160 ;compare with right side of screen
+	jr	z, MoveRightRet ;don't move if on edge
+	ld	a, [_SPR1_X]
+	sub	8
+	ld	[hl], a
+	ld	a, [_SPR0_X]
+	cp	[hl]
+	jr	z, TestRightCol
+TestRightColRet:
 	inc	a
 	ld	[_SPR0_X], a
 	jr	MoveRightRet
 
+TestRightCol:
+	ld	a, [_SPR0_Y]
+	ld	[hl], a
+	ld	a, [_SPR1_Y]
+	cp	[hl]
+	sub	1
+	cp	[hl]
+	jr	z, MoveRightRet
+	sub	2
+	cp	[hl]
+	jr	z, MoveRightRet
+	sub	3
+	cp	[hl]
+	jr	z, MoveRightRet
+	sub	4
+	cp	[hl]
+	jr	z, MoveRightRet
+	sub	5
+	cp	[hl]
+	jr	z, MoveRightRet
+	ld	a, [hl]
+	ld	[_SPR0_Y], a
+	jr	TestRightColRet
+	
+
 MoveLeft:
 	ld	a, [_SPR0_X]
+	cp	8 ;compare with left side of screen
+	jr	z, MoveLeftRet ;don't move if on edge 
+
 	dec	a
 	ld	[_SPR0_X],a
 	jr	MoveLeftRet
 
 MoveDown:
 	ld	a, [_SPR0_Y]
+	cp	16 ;compare with bottom of screen
+	jr	z, MoveDownRet ;don't move if on edge
+
 	dec	a
 	ld	[_SPR0_Y],a
 	jr	MoveDownRet
 
 MoveUp:
 	ld	a, [_SPR0_Y]
+	cp	152 ;compare with top of screen 
+	jr	z, MoveUpRet ;don't move if on edge 
+
 	inc	a
 	ld	[_SPR0_Y],a
 	jr	MoveUpRet
@@ -217,8 +237,12 @@ StopLCD:
 Tiles:
 	;bg tile
 	DB $00, $00, $00, $00, $00, $00, $00, $00
-	DB $AA, $00, $44, $00, $AA, $00, $11, $00
+	DB $AA, $00, $00, $00, $00, $00, $00, $00
+	;DB $AA, $14, $55, $28, $AA, $51, $55, $A2, $AA, $45, $55, $8A, $55, $8A, $AA, $14
+	;DB $00, $00, $80, $01, $80, $01, $80, $01, $80, $01, $80, $01, $80, $01, $00, $FF
 	;sprite
 	DB $00, $00, $42, $42, $42, $42, $00, $00 
 	DB $18, $18, $99, $99, $66, $66, $00, $00
+	DB $00, $FF, $BF, $C1, $9F, $E1, $8F, $F1 
+	DB $18, $F9, $83, $FD, $81, $FF, $FF, $FF
 EndTiles:
