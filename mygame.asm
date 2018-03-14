@@ -129,7 +129,7 @@ MoveRightRet:
 	ld	a, b
 	and	$02
 	cp	$02
-	jr	z, MoveLeft
+	jp	z, MoveLeft
 MoveLeftRet:
 	;test down key
 	ld	a, b
@@ -187,6 +187,15 @@ TestRightCol:
 	add	1 ;4
 	cp	[hl]
 	jr	z, PushRight
+	add	1
+	cp	[hl]
+	jr	z, PushRight
+	add	1
+	cp	[hl]
+	jr	z, PushRight
+	add	1
+	cp	[hl]
+	jr	z, PushRight
 	ld	a, [_SPR1_Y]
 	sub	1 ;5
 	cp	[hl]
@@ -200,6 +209,12 @@ TestRightCol:
 	sub	1 ;8
 	cp	[hl]
 	jr	z, PushRight
+	sub	1
+	cp	[hl]
+	jr	z, PushRight
+	sub	1
+	cp	[hl]
+	jr	z, PushRight
 	;ld	a, [hl]
 	;ld	[_SPR0_Y], a
 PushRightRet:
@@ -209,7 +224,7 @@ PushRightRet:
 MoveLeft:
 	ld	a, [_SPR0_X]
 	cp	8 ;compare with left side of screen
-	jr	z, MoveLeftRet ;don't move if on edge 
+	jp	z, MoveLeftRet ;don't move if on edge 
 	ld	a, [_SPR1_X]
 	add	8
 	ld	[hl], a
@@ -247,6 +262,15 @@ TestLeftCol:
 	add	1 ;4
 	cp	[hl]
 	jp	z, PushLeft
+	add	1
+	cp	[hl]
+	jp	z, PushLeft
+	add	1
+	cp	[hl]
+	jp	z, PushLeft
+	add	1
+	cp	[hl]
+	jp	z, PushLeft
 	ld	a, [_SPR1_Y]
 	sub	1 ;5
 	cp	[hl]
@@ -260,6 +284,15 @@ TestLeftCol:
 	sub	1 ;8
 	cp	[hl]
 	jp	z, PushLeft
+	sub	1
+	cp	[hl]
+	jp	z, PushLeft
+	sub	1
+	cp	[hl]
+	jp	z, PushLeft
+	sub	1
+	cp	[hl]
+	jp	z, PushLeft
 PushLeftRet:
 	ld	a, [_SPR0_X]
 	jp	TestLeftColRet
@@ -269,7 +302,7 @@ MoveDown:
 	cp	16 ;compare with bottom of screen
 	jp	z, MoveDownRet ;don't move if on edge
 	ld	a, [_SPR1_Y]
-	add	8
+	add	7
 	ld	[hl], a
 	ld	a, [_SPR0_Y]
 	cp	[hl]
@@ -306,6 +339,15 @@ TestDownCol:
 	add	1 ;4
 	cp	[hl]
 	jp	z, PushDown
+	add	1
+	cp	[hl]
+	jp	z, PushDown
+	add	1
+	cp	[hl]
+	jp	z, PushDown
+	add	1
+	cp	[hl]
+	jp	z, PushDown
 	ld	a, [_SPR1_X]
 	sub	1 ;5
 	cp	[hl]
@@ -316,9 +358,18 @@ TestDownCol:
 	sub	1 ;7
 	cp	[hl]
 	jp	z, PushDown
-;	sub	1 ;8
-;	cp	[hl]
-;	jp	z, MoveDownRet
+	sub	1 ;8
+	cp	[hl]
+	jp	z, PushDown
+	sub	1
+	cp	[hl]
+	jp	z, PushDown
+	sub	1
+	cp	[hl]
+	jp	z, PushDown
+	sub	1
+	cp	[hl]
+	jp	z, PushDown
 PushDownRet:
 	ld	a, [_SPR0_Y]
 	jp	TestDownColRet
@@ -328,7 +379,7 @@ MoveUp:
 	cp	152 ;compare with top of screen 
 	jp	z, MoveUpRet ;don't move if on edge 
 	ld	a, [_SPR1_Y]
-	sub	8
+	sub	7
 	ld	[hl], a
 	ld	a, [_SPR0_Y]
 	cp	[hl]
@@ -364,6 +415,15 @@ TestUpCol:
 	add	1 ;4
 	cp	[hl]
 	jp	z, PushUp
+	add	1
+	cp	[hl]
+	jp	z, PushUp
+	add	1
+	cp	[hl]
+	jp	z, PushUp
+	add	1	
+	cp	[hl]
+	jp	z, PushUp
 	ld	a, [_SPR1_X]
 	sub	1 ;5
 	cp	[hl]
@@ -374,9 +434,18 @@ TestUpCol:
 	sub	1 ;7
 	cp	[hl]
 	jp	z, PushUp
-;	sub	1 ;8
-;	cp	[hl]
-;	jp	z, MoveDownRet
+	sub	1 ;8
+	cp	[hl]
+	jp	z, PushUp
+	sub	1
+	cp	[hl]
+	jp	z, PushUp
+	sub	1
+	cp	[hl]
+	jp	z, PushUp
+	sub	1
+	cp	[hl]
+	jp	z, PushUp
 PushUpRet:
 	ld	a, [_SPR0_Y]
 	jp	TestUpColRet
