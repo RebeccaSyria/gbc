@@ -161,39 +161,48 @@ TestRightColRet:
 	ld	[_SPR0_X], a
 	jr	MoveRightRet
 
+PushRight:
+	ld	a, [_SPR1_X]
+	cp	160
+	jr	z, MoveRightRet
+	inc	a
+	ld	[_SPR1_X], a
+	jr	PushRightRet
+
 TestRightCol:
 	ld	a, [_SPR0_Y]
 	ld	[hl], a
 	ld	a, [_SPR1_Y]
 	cp	[hl]
-	jr	z, MoveRightRet
+	jr	z, PushRight
 	add	1 ;1
 	cp	[hl]
-	jr	z, MoveRightRet
+	jr	z, PushRight
 	add	1 ;2
 	cp	[hl]
-	jr	z, MoveRightRet
+	jr	z, PushRight
 	add	1 ;3
 	cp	[hl]
-	jr	z, MoveRightRet
+	jr	z, PushRight
 	add	1 ;4
 	cp	[hl]
-	jr	z, MoveRightRet
+	jr	z, PushRight
 	ld	a, [_SPR1_Y]
 	sub	1 ;5
 	cp	[hl]
-	jr	z, MoveRightRet
+	jr	z, PushRight
 	sub	1 ;6
 	cp	[hl]
-	jr	z, MoveRightRet
+	jr	z, PushRight
 	sub	1 ;7
 	cp	[hl]
-	jr	z, MoveRightRet
+	jr	z, PushRight
 	sub	1 ;8
 	cp	[hl]
-	jr	z, MoveRightRet
+	jr	z, PushRight
 	;ld	a, [hl]
 	;ld	[_SPR0_Y], a
+PushRightRet:
 	ld	a, [_SPR0_X]
 	jr	TestRightColRet
 	
@@ -210,39 +219,48 @@ MoveLeft:
 TestLeftColRet:
 	dec	a
 	ld	[_SPR0_X],a
-	jr	MoveLeftRet
+	jp	MoveLeftRet
+
+PushLeft:
+	ld	a, [_SPR1_X]
+	cp	7
+	jp	z, MoveLeftRet
+	dec	a
+	ld	[_SPR1_X], a
+	jr	PushLeftRet
 
 TestLeftCol:
 	ld	a, [_SPR0_Y]
 	ld	[hl], a
 	ld	a, [_SPR1_Y]
 	cp	[hl]
-	jp	z, MoveLeftRet
+	jp	z, PushLeft
 	add	1 ;1
 	cp	[hl]
-	jp	z, MoveLeftRet
+	jp	z, PushLeft
 	add	1 ;2
 	cp	[hl]
-	jp	z, MoveLeftRet
+	jp	z, PushLeft
 	add	1 ;3
 	cp	[hl]
-	jp	z, MoveLeftRet
+	jp	z, PushLeft
 	add	1 ;4
 	cp	[hl]
-	jp	z, MoveLeftRet
+	jp	z, PushLeft
 	ld	a, [_SPR1_Y]
 	sub	1 ;5
 	cp	[hl]
-	jp	z, MoveLeftRet
+	jp	z, PushLeft
 	sub	1 ;6
 	cp	[hl]
-	jp	z, MoveLeftRet
+	jp	z, PushLeft
 	sub	1 ;7
 	cp	[hl]
-	jp	z, MoveLeftRet
+	jp	z, PushLeft
 	sub	1 ;8
 	cp	[hl]
-	jp	z, MoveLeftRet
+	jp	z, PushLeft
+PushLeftRet:
 	ld	a, [_SPR0_X]
 	jp	TestLeftColRet
 	
@@ -261,37 +279,47 @@ TestDownColRet:
 	ld	[_SPR0_Y],a
 	jp	MoveDownRet
 
+PushDown:
+	ld	a, [_SPR1_Y]
+	cp	15
+	jp	z, MoveDownRet
+	dec	a
+	ld	[_SPR1_Y], a
+	jr	PushDownRet
+
+
 TestDownCol:
 	ld	a, [_SPR0_X]
 	ld	[hl], a
 	ld	a, [_SPR1_X]
 	cp	[hl]
-	jp	z, MoveDownRet
+	jp	z, PushDown
 	add	1 ;1
 	cp	[hl]
-	jp	z, MoveDownRet
+	jp	z, PushDown
 	add	1 ;2
 	cp	[hl]
-	jp	z, MoveDownRet
+	jp	z, PushDown
 	add	1 ;3
 	cp	[hl]
-	jp	z, MoveDownRet
+	jp	z, PushDown
 	add	1 ;4
 	cp	[hl]
-	jp	z, MoveDownRet
+	jp	z, PushDown
 	ld	a, [_SPR1_X]
 	sub	1 ;5
 	cp	[hl]
-	jp	z, MoveDownRet
+	jp	z, PushDown
 	sub	1 ;6
 	cp	[hl]
-	jp	z, MoveDownRet
+	jp	z, PushDown
 	sub	1 ;7
 	cp	[hl]
-	jp	z, MoveDownRet
+	jp	z, PushDown
 ;	sub	1 ;8
 ;	cp	[hl]
 ;	jp	z, MoveDownRet
+PushDownRet:
 	ld	a, [_SPR0_Y]
 	jp	TestDownColRet
 	
@@ -310,37 +338,46 @@ TestUpColRet:
 	ld	[_SPR0_Y],a
 	jp	MoveUpRet
 
+PushUp:
+	ld	a, [_SPR1_Y]
+	cp	152
+	jp	z, MoveUpRet
+	inc	a
+	ld	[_SPR1_Y], a
+	jr	PushUpRet
+
 TestUpCol:
 	ld	a, [_SPR0_X]
 	ld	[hl], a
 	ld	a, [_SPR1_X]
 	cp	[hl]
-	jp	z, MoveUpRet
+	jp	z, PushUp
 	add	1 ;1
 	cp	[hl]
-	jp	z, MoveUpRet
+	jp	z, PushUp
 	add	1 ;2
 	cp	[hl]
-	jp	z, MoveUpRet
+	jp	z, PushUp
 	add	1 ;3
 	cp	[hl]
-	jp	z, MoveUpRet
+	jp	z, PushUp
 	add	1 ;4
 	cp	[hl]
-	jp	z, MoveUpRet
+	jp	z, PushUp
 	ld	a, [_SPR1_X]
 	sub	1 ;5
 	cp	[hl]
-	jp	z, MoveUpRet
+	jp	z, PushUp
 	sub	1 ;6
 	cp	[hl]
-	jp	z, MoveUpRet
+	jp	z, PushUp
 	sub	1 ;7
 	cp	[hl]
-	jp	z, MoveUpRet
+	jp	z, PushUp
 ;	sub	1 ;8
 ;	cp	[hl]
 ;	jp	z, MoveDownRet
+PushUpRet:
 	ld	a, [_SPR0_Y]
 	jp	TestUpColRet
 	
