@@ -135,13 +135,13 @@ MoveLeftRet:
 	ld	a, b
 	and	$04
 	cp	$04
-	jr	z, MoveDown
+	jp	z, MoveDown
 MoveDownRet:
 	;test up key
 	ld	a, b
 	and	$08
 	cp	$08
-	jr	z, MoveUp
+	jp	z, MoveUp
 MoveUpRet:
 	pop	bc ;return bc from stack
 	ret 
@@ -166,53 +166,184 @@ TestRightCol:
 	ld	[hl], a
 	ld	a, [_SPR1_Y]
 	cp	[hl]
-	sub	1
+	jr	z, MoveRightRet
+	add	1 ;1
 	cp	[hl]
 	jr	z, MoveRightRet
-	sub	2
+	add	1 ;2
 	cp	[hl]
 	jr	z, MoveRightRet
-	sub	3
+	add	1 ;3
 	cp	[hl]
 	jr	z, MoveRightRet
-	sub	4
+	add	1 ;4
 	cp	[hl]
 	jr	z, MoveRightRet
-	sub	5
+	ld	a, [_SPR1_Y]
+	sub	1 ;5
 	cp	[hl]
 	jr	z, MoveRightRet
-	ld	a, [hl]
-	ld	[_SPR0_Y], a
+	sub	1 ;6
+	cp	[hl]
+	jr	z, MoveRightRet
+	sub	1 ;7
+	cp	[hl]
+	jr	z, MoveRightRet
+	sub	1 ;8
+	cp	[hl]
+	jr	z, MoveRightRet
+	;ld	a, [hl]
+	;ld	[_SPR0_Y], a
+	ld	a, [_SPR0_X]
 	jr	TestRightColRet
 	
-
 MoveLeft:
 	ld	a, [_SPR0_X]
 	cp	8 ;compare with left side of screen
 	jr	z, MoveLeftRet ;don't move if on edge 
-
+	ld	a, [_SPR1_X]
+	add	8
+	ld	[hl], a
+	ld	a, [_SPR0_X]
+	cp	[hl]
+	jr	z, TestLeftCol
+TestLeftColRet:
 	dec	a
 	ld	[_SPR0_X],a
 	jr	MoveLeftRet
 
+TestLeftCol:
+	ld	a, [_SPR0_Y]
+	ld	[hl], a
+	ld	a, [_SPR1_Y]
+	cp	[hl]
+	jp	z, MoveLeftRet
+	add	1 ;1
+	cp	[hl]
+	jp	z, MoveLeftRet
+	add	1 ;2
+	cp	[hl]
+	jp	z, MoveLeftRet
+	add	1 ;3
+	cp	[hl]
+	jp	z, MoveLeftRet
+	add	1 ;4
+	cp	[hl]
+	jp	z, MoveLeftRet
+	ld	a, [_SPR1_Y]
+	sub	1 ;5
+	cp	[hl]
+	jp	z, MoveLeftRet
+	sub	1 ;6
+	cp	[hl]
+	jp	z, MoveLeftRet
+	sub	1 ;7
+	cp	[hl]
+	jp	z, MoveLeftRet
+	sub	1 ;8
+	cp	[hl]
+	jp	z, MoveLeftRet
+	ld	a, [_SPR0_X]
+	jp	TestLeftColRet
+	
 MoveDown:
 	ld	a, [_SPR0_Y]
 	cp	16 ;compare with bottom of screen
-	jr	z, MoveDownRet ;don't move if on edge
-
+	jp	z, MoveDownRet ;don't move if on edge
+	ld	a, [_SPR1_Y]
+	add	8
+	ld	[hl], a
+	ld	a, [_SPR0_Y]
+	cp	[hl]
+	jr	z, TestDownCol
+TestDownColRet:
 	dec	a
 	ld	[_SPR0_Y],a
-	jr	MoveDownRet
+	jp	MoveDownRet
 
+TestDownCol:
+	ld	a, [_SPR0_X]
+	ld	[hl], a
+	ld	a, [_SPR1_X]
+	cp	[hl]
+	jp	z, MoveDownRet
+	add	1 ;1
+	cp	[hl]
+	jp	z, MoveDownRet
+	add	1 ;2
+	cp	[hl]
+	jp	z, MoveDownRet
+	add	1 ;3
+	cp	[hl]
+	jp	z, MoveDownRet
+	add	1 ;4
+	cp	[hl]
+	jp	z, MoveDownRet
+	ld	a, [_SPR1_X]
+	sub	1 ;5
+	cp	[hl]
+	jp	z, MoveDownRet
+	sub	1 ;6
+	cp	[hl]
+	jp	z, MoveDownRet
+	sub	1 ;7
+	cp	[hl]
+	jp	z, MoveDownRet
+;	sub	1 ;8
+;	cp	[hl]
+;	jp	z, MoveDownRet
+	ld	a, [_SPR0_Y]
+	jp	TestDownColRet
+	
 MoveUp:
 	ld	a, [_SPR0_Y]
 	cp	152 ;compare with top of screen 
-	jr	z, MoveUpRet ;don't move if on edge 
-
+	jp	z, MoveUpRet ;don't move if on edge 
+	ld	a, [_SPR1_Y]
+	sub	8
+	ld	[hl], a
+	ld	a, [_SPR0_Y]
+	cp	[hl]
+	jr	z, TestUpCol
+TestUpColRet:
 	inc	a
 	ld	[_SPR0_Y],a
-	jr	MoveUpRet
+	jp	MoveUpRet
 
+TestUpCol:
+	ld	a, [_SPR0_X]
+	ld	[hl], a
+	ld	a, [_SPR1_X]
+	cp	[hl]
+	jp	z, MoveUpRet
+	add	1 ;1
+	cp	[hl]
+	jp	z, MoveUpRet
+	add	1 ;2
+	cp	[hl]
+	jp	z, MoveUpRet
+	add	1 ;3
+	cp	[hl]
+	jp	z, MoveUpRet
+	add	1 ;4
+	cp	[hl]
+	jp	z, MoveUpRet
+	ld	a, [_SPR1_X]
+	sub	1 ;5
+	cp	[hl]
+	jp	z, MoveUpRet
+	sub	1 ;6
+	cp	[hl]
+	jp	z, MoveUpRet
+	sub	1 ;7
+	cp	[hl]
+	jp	z, MoveUpRet
+;	sub	1 ;8
+;	cp	[hl]
+;	jp	z, MoveDownRet
+	ld	a, [_SPR0_Y]
+	jp	TestUpColRet
+	
 ;delay, parameter in bc 
 Delay:
 	dec	bc
