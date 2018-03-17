@@ -176,7 +176,7 @@ TestRightCol:
 	ld	a, [_SPR1_Y]
 	add	7
 	ld	d, a ;sprite 1 Y plus 8 into d
-	ld	b, 13
+	ld	b, 15
 .RightColLoop:
 	dec	d
 	ld	a, d
@@ -185,7 +185,6 @@ TestRightCol:
 	dec	b ; decrement b
 	jr	z, TestRightColRet
 	jr	.RightColLoop ;if not 0 loop back 
-	jp	TestRightColRet
 	
 MoveLeft:
 	ld	a, [_SPR0_X]
@@ -198,6 +197,7 @@ MoveLeft:
 	cp	[hl]
 	jr	z, TestLeftCol
 TestLeftColRet:
+	ld	a, [_SPR0_X]
 	dec	a
 	ld	[_SPR0_X],a
 	jp	MoveLeftRet
@@ -208,60 +208,23 @@ PushLeft:
 	jp	z, MoveLeftRet
 	dec	a
 	ld	[_SPR1_X], a
-	jr	PushLeftRet
+	jr	TestLeftColRet
 
 TestLeftCol:
 	ld	a, [_SPR0_Y]
-	ld	[hl], a
+	ld	c, a
 	ld	a, [_SPR1_Y]
-	cp	[hl]
-	jp	z, PushLeft
-	add	1 ;1
-	cp	[hl]
-	jp	z, PushLeft
-	add	1 ;2
-	cp	[hl]
-	jp	z, PushLeft
-	add	1 ;3
-	cp	[hl]
-	jp	z, PushLeft
-	add	1 ;4
-	cp	[hl]
-	jp	z, PushLeft
-	add	1
-	cp	[hl]
-	jp	z, PushLeft
-	add	1
-	cp	[hl]
-	jp	z, PushLeft
-;	add	1
-;	cp	[hl]
-;	jp	z, PushLeft
-	ld	a, [_SPR1_Y]
-	sub	1 ;5
-	cp	[hl]
-	jp	z, PushLeft
-	sub	1 ;6
-	cp	[hl]
-	jp	z, PushLeft
-	sub	1 ;7
-	cp	[hl]
-	jp	z, PushLeft
-	sub	1 ;8
-	cp	[hl]
-	jp	z, PushLeft
-	sub	1
-	cp	[hl]
-	jp	z, PushLeft
-	sub	1
-	cp	[hl]
-	jp	z, PushLeft
-;	sub	1
-;	cp	[hl]
-;	jp	z, PushLeft
-PushLeftRet:
-	ld	a, [_SPR0_X]
-	jp	TestLeftColRet
+	add	7
+	ld	d, a
+	ld	b, 14
+.LeftColLoop:
+	dec	d
+	ld	a, d
+	cp	c
+	jr	z, PushLeft
+	dec	b
+	jr	z, TestLeftColRet
+	jr	.LeftColLoop
 	
 MoveDown:
 	ld	a, [_SPR0_Y]
@@ -274,6 +237,7 @@ MoveDown:
 	cp	[hl]
 	jr	z, TestDownCol
 TestDownColRet:
+	ld	a, [_SPR0_Y]
 	dec	a
 	ld	[_SPR0_Y],a
 	jp	MoveDownRet
@@ -284,61 +248,24 @@ PushDown:
 	jp	z, MoveDownRet
 	dec	a
 	ld	[_SPR1_Y], a
-	jr	PushDownRet
+	jr	TestDownColRet
 
 
 TestDownCol:
 	ld	a, [_SPR0_X]
-	ld	[hl], a
+	ld	c, a
 	ld	a, [_SPR1_X]
-	cp	[hl]
-	jp	z, PushDown
-	add	1 ;1
-	cp	[hl]
-	jp	z, PushDown
-	add	1 ;2
-	cp	[hl]
-	jp	z, PushDown
-	add	1 ;3
-	cp	[hl]
-	jp	z, PushDown
-	add	1 ;4
-	cp	[hl]
-	jp	z, PushDown
-	add	1
-	cp	[hl]
-	jp	z, PushDown
-;	add	1
-;	cp	[hl]
-;	jp	z, PushDown
-	add	1
-	cp	[hl]
-	jp	z, PushDown
-	ld	a, [_SPR1_X]
-	sub	1 ;5
-	cp	[hl]
-	jp	z, PushDown
-	sub	1 ;6
-	cp	[hl]
-	jp	z, PushDown
-	sub	1 ;7
-	cp	[hl]
-	jp	z, PushDown
-	sub	1 ;8
-	cp	[hl]
-	jp	z, PushDown
-	sub	1
-	cp	[hl]
-	jp	z, PushDown
-	sub	1
-	cp	[hl]
-	jp	z, PushDown
-;	sub	1
-;	cp	[hl]
-;	jp	z, PushDown
-PushDownRet:
-	ld	a, [_SPR0_Y]
-	jp	TestDownColRet
+	add	7
+	ld	d, a
+	ld	b, 13
+.DownColLoop:
+	dec	d
+	ld	a, d
+	cp	c
+	jr	z, PushDown
+	dec	b
+	jr	z, TestDownColRet
+	jr	.DownColLoop
 	
 MoveUp:
 	ld	a, [_SPR0_Y]
@@ -351,6 +278,7 @@ MoveUp:
 	cp	[hl]
 	jr	z, TestUpCol
 TestUpColRet:
+	ld	a, [_SPR0_Y]
 	inc	a
 	ld	[_SPR0_Y],a
 	jp	MoveUpRet
@@ -361,60 +289,23 @@ PushUp:
 	jp	z, MoveUpRet
 	inc	a
 	ld	[_SPR1_Y], a
-	jr	PushUpRet
+	jr	TestUpColRet
 
 TestUpCol:
 	ld	a, [_SPR0_X]
-	ld	[hl], a
+	ld	c, a
 	ld	a, [_SPR1_X]
-	cp	[hl]
-	jp	z, PushUp
-	add	1 ;1
-	cp	[hl]
-	jp	z, PushUp
-	add	1 ;2
-	cp	[hl]
-	jp	z, PushUp
-	add	1 ;3
-	cp	[hl]
-	jp	z, PushUp
-	add	1 ;4
-	cp	[hl]
-	jp	z, PushUp
-	add	1
-	cp	[hl]
-	jp	z, PushUp
-	add	1
-	cp	[hl]
-	jp	z, PushUp
-	add	1	
-	cp	[hl]
-	jp	z, PushUp
-	ld	a, [_SPR1_X]
-	sub	1 ;5
-	cp	[hl]
-	jp	z, PushUp
-	sub	1 ;6
-	cp	[hl]
-	jp	z, PushUp
-	sub	1 ;7
-	cp	[hl]
-	jp	z, PushUp
-	sub	1 ;8
-	cp	[hl]
-	jp	z, PushUp
-	sub	1
-	cp	[hl]
-	jp	z, PushUp
-	sub	1
-	cp	[hl]
-	jp	z, PushUp
-	sub	1
-	cp	[hl]
-	jp	z, PushUp
-PushUpRet:
-	ld	a, [_SPR0_Y]
-	jp	TestUpColRet
+	add	7
+	ld	d, a
+	ld	b, 12
+.UpColLoop:
+	dec	d
+	ld	a, d
+	cp	c
+	jr	z, PushUp
+	dec	b
+	jr	z, TestUpColRet
+	jr	.UpColLoop
 	
 ;delay, parameter in bc 
 Delay:
