@@ -157,6 +157,7 @@ MoveRight:
 	cp	[hl]
 	jr	z, TestRightCol
 TestRightColRet:
+	ld	a, [_SPR0_X]
 	inc	a
 	ld	[_SPR0_X], a
 	jr	MoveRightRet
@@ -164,62 +165,27 @@ TestRightColRet:
 PushRight:
 	ld	a, [_SPR1_X]
 	cp	160
-	jr	z, MoveRightRet
+	jp	z, MoveRightRet
 	inc	a
 	ld	[_SPR1_X], a
-	jr	PushRightRet
+	jp	TestRightColRet
 
 TestRightCol:
 	ld	a, [_SPR0_Y]
-	ld	[hl], a
+	ld	c, a ; sprite 0 Y into c
 	ld	a, [_SPR1_Y]
-	cp	[hl]
-	jr	z, PushRight
-	add	1 ;1
-	cp	[hl]
-	jr	z, PushRight
-	add	1 ;2
-	cp	[hl]
-	jr	z, PushRight
-	add	1 ;3
-	cp	[hl]
-	jr	z, PushRight
-	add	1 ;4
-	cp	[hl]
-	jr	z, PushRight
-	add	1
-	cp	[hl]
-	jr	z, PushRight
-	add	1
-	cp	[hl]
-	jr	z, PushRight
-	add	1
-	cp	[hl]
-	jr	z, PushRight
-	ld	a, [_SPR1_Y]
-	sub	1 ;5
-	cp	[hl]
-	jr	z, PushRight
-	sub	1 ;6
-	cp	[hl]
-	jr	z, PushRight
-	sub	1 ;7
-	cp	[hl]
-	jr	z, PushRight
-	sub	1 ;8
-	cp	[hl]
-	jr	z, PushRight
-	sub	1
-	cp	[hl]
-	jr	z, PushRight
-	sub	1
-	cp	[hl]
-	jr	z, PushRight
-	;ld	a, [hl]
-	;ld	[_SPR0_Y], a
-PushRightRet:
-	ld	a, [_SPR0_X]
-	jr	TestRightColRet
+	add	7
+	ld	d, a ;sprite 1 Y plus 8 into d
+	ld	b, 13
+.RightColLoop:
+	dec	d
+	ld	a, d
+	cp	c ;compare d(in a) with c
+	jr	z, PushRight ;push the box if colliding in y 
+	dec	b ; decrement b
+	jr	z, TestRightColRet
+	jr	.RightColLoop ;if not 0 loop back 
+	jp	TestRightColRet
 	
 MoveLeft:
 	ld	a, [_SPR0_X]
@@ -268,9 +234,9 @@ TestLeftCol:
 	add	1
 	cp	[hl]
 	jp	z, PushLeft
-	add	1
-	cp	[hl]
-	jp	z, PushLeft
+;	add	1
+;	cp	[hl]
+;	jp	z, PushLeft
 	ld	a, [_SPR1_Y]
 	sub	1 ;5
 	cp	[hl]
@@ -290,9 +256,9 @@ TestLeftCol:
 	sub	1
 	cp	[hl]
 	jp	z, PushLeft
-	sub	1
-	cp	[hl]
-	jp	z, PushLeft
+;	sub	1
+;	cp	[hl]
+;	jp	z, PushLeft
 PushLeftRet:
 	ld	a, [_SPR0_X]
 	jp	TestLeftColRet
@@ -342,9 +308,9 @@ TestDownCol:
 	add	1
 	cp	[hl]
 	jp	z, PushDown
-	add	1
-	cp	[hl]
-	jp	z, PushDown
+;	add	1
+;	cp	[hl]
+;	jp	z, PushDown
 	add	1
 	cp	[hl]
 	jp	z, PushDown
@@ -367,9 +333,9 @@ TestDownCol:
 	sub	1
 	cp	[hl]
 	jp	z, PushDown
-	sub	1
-	cp	[hl]
-	jp	z, PushDown
+;	sub	1
+;	cp	[hl]
+;	jp	z, PushDown
 PushDownRet:
 	ld	a, [_SPR0_Y]
 	jp	TestDownColRet
@@ -474,12 +440,12 @@ StopLCD:
 Tiles:
 	;bg tile
 	DB $00, $00, $00, $00, $00, $00, $00, $00
-	DB $AA, $00, $00, $00, $00, $00, $00, $00
+	DB $00, $00, $00, $00, $00, $00, $00, $00
 	;DB $AA, $14, $55, $28, $AA, $51, $55, $A2, $AA, $45, $55, $8A, $55, $8A, $AA, $14
 	;DB $00, $00, $80, $01, $80, $01, $80, $01, $80, $01, $80, $01, $80, $01, $00, $FF
 	;sprite
 	DB $00, $00, $42, $42, $42, $42, $00, $00 
 	DB $18, $18, $99, $99, $66, $66, $00, $00
-	DB $00, $FF, $BF, $C1, $9F, $E1, $8F, $F1 
-	DB $18, $F9, $83, $FD, $81, $FF, $FF, $FF
+	DB $FF, $FF, $BF, $C1, $9F, $E1, $8F, $F1 
+	DB $87, $F9, $83, $FD, $81, $FF, $FF, $FF
 EndTiles:
