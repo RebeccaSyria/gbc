@@ -155,7 +155,14 @@ MoveRight:
 	ld	[hl], a
 	ld	a, [_SPR0_X]
 	cp	[hl]
-	jr	z, TestRightCol
+	jr	nz, TestRightColRet
+	ld	a, [_SPR0_Y]
+	ld	c, a
+	ld	a, [_SPR1_Y]
+	call	TestCol
+	ld	a, b
+	cp	0
+	jr	z, PushRight
 TestRightColRet:
 	ld	a, [_SPR0_X]
 	inc	a
@@ -170,22 +177,31 @@ PushRight:
 	ld	[_SPR1_X], a
 	jp	TestRightColRet
 
-TestRightCol:
-	ld	a, [_SPR0_Y]
-	ld	c, a ; sprite 0 Y into c
-	ld	a, [_SPR1_Y]
-	add	7
-	ld	d, a ;sprite 1 Y plus 8 into d
-	ld	b, 15
-.RightColLoop:
+;collision testing
+;pre condition:
+; c: first sprite's coord (x or y)
+; a: second sprite's coord (x or y)
+;return:
+; b: 0 if colliding 
+TestCol:
+	add	8
+	ld	d, a
+	ld	b, 14
+.TestColLoop:
 	dec	d
 	ld	a, d
-	cp	c ;compare d(in a) with c
-	jr	z, PushRight ;push the box if colliding in y 
-	dec	b ; decrement b
-	jr	z, TestRightColRet
-	jr	.RightColLoop ;if not 0 loop back 
-	
+	cp	c
+	jr	z, TestColTrue
+	dec	b
+	jr	z, TestColFalse
+	jr	.TestColLoop
+TestColTrue:
+	ld	b, 0
+	ret
+TestColFalse:
+	ld	b, 1
+	ret
+
 MoveLeft:
 	ld	a, [_SPR0_X]
 	cp	8 ;compare with left side of screen
@@ -195,7 +211,14 @@ MoveLeft:
 	ld	[hl], a
 	ld	a, [_SPR0_X]
 	cp	[hl]
-	jr	z, TestLeftCol
+	jp	nz, TestLeftColRet
+	ld	a, [_SPR0_Y]
+	ld	c, a
+	ld	a, [_SPR1_Y]
+	call	TestCol
+	ld	a, b
+	cp	0
+	jr	z, PushLeft
 TestLeftColRet:
 	ld	a, [_SPR0_X]
 	dec	a
@@ -210,22 +233,6 @@ PushLeft:
 	ld	[_SPR1_X], a
 	jr	TestLeftColRet
 
-TestLeftCol:
-	ld	a, [_SPR0_Y]
-	ld	c, a
-	ld	a, [_SPR1_Y]
-	add	7
-	ld	d, a
-	ld	b, 14
-.LeftColLoop:
-	dec	d
-	ld	a, d
-	cp	c
-	jr	z, PushLeft
-	dec	b
-	jr	z, TestLeftColRet
-	jr	.LeftColLoop
-	
 MoveDown:
 	ld	a, [_SPR0_Y]
 	cp	16 ;compare with bottom of screen
@@ -235,7 +242,14 @@ MoveDown:
 	ld	[hl], a
 	ld	a, [_SPR0_Y]
 	cp	[hl]
-	jr	z, TestDownCol
+	jr	nz, TestDownColRet
+	ld	a, [_SPR0_X]
+	ld	c, a
+	ld	a, [_SPR1_X]
+	call	TestCol
+	ld	a, b
+	cp	0
+	jr	z, PushDown
 TestDownColRet:
 	ld	a, [_SPR0_Y]
 	dec	a
@@ -248,25 +262,8 @@ PushDown:
 	jp	z, MoveDownRet
 	dec	a
 	ld	[_SPR1_Y], a
-	jr	TestDownColRet
+	jp	TestDownColRet
 
-
-TestDownCol:
-	ld	a, [_SPR0_X]
-	ld	c, a
-	ld	a, [_SPR1_X]
-	add	7
-	ld	d, a
-	ld	b, 13
-.DownColLoop:
-	dec	d
-	ld	a, d
-	cp	c
-	jr	z, PushDown
-	dec	b
-	jr	z, TestDownColRet
-	jr	.DownColLoop
-	
 MoveUp:
 	ld	a, [_SPR0_Y]
 	cp	152 ;compare with top of screen 
@@ -276,7 +273,14 @@ MoveUp:
 	ld	[hl], a
 	ld	a, [_SPR0_Y]
 	cp	[hl]
-	jr	z, TestUpCol
+	jr	nz, TestUpColRet
+	ld	a, [_SPR0_X]
+	ld	c, a
+	ld	a, [_SPR1_X]
+	call	TestCol
+	ld	a, b
+	cp	0
+	jp	z, PushUp
 TestUpColRet:
 	ld	a, [_SPR0_Y]
 	inc	a
@@ -289,24 +293,7 @@ PushUp:
 	jp	z, MoveUpRet
 	inc	a
 	ld	[_SPR1_Y], a
-	jr	TestUpColRet
-
-TestUpCol:
-	ld	a, [_SPR0_X]
-	ld	c, a
-	ld	a, [_SPR1_X]
-	add	7
-	ld	d, a
-	ld	b, 12
-.UpColLoop:
-	dec	d
-	ld	a, d
-	cp	c
-	jr	z, PushUp
-	dec	b
-	jr	z, TestUpColRet
-	jr	.UpColLoop
-	
+	jp	TestUpColRet
 ;delay, parameter in bc 
 Delay:
 	dec	bc
