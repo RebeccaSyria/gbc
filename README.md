@@ -1,3 +1,9 @@
 # gbc
-In progress gameboy color game written in assembly 
-A learning project, currently working on sprites and joypad input 
+
+GameBoy Assembly Learning Project
+
+Currently can Do:
+- Displaying Sprites 
+- Joypad Input + Sprite movement 
+- Box Collission and Wall Collission 
+
