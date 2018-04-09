@@ -5,5 +5,6 @@ GameBoy Assembly Learning Project
 Currently can Do:
 - Displaying Sprites 
 - Joypad Input + Sprite movement 
-- Box Collission and Wall Collission 
+- Wall Collission 
+- Box Collission / pushing a second Sprite 
 
